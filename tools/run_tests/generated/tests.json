@@ -484,9 +484,7 @@
     "uses_polling": true
   }, 
   {
-    "args": [
-      "--resolver=ares"
-    ], 
+    "args": [], 
     "benchmark": false, 
     "ci_platforms": [
       "linux", 
@@ -500,33 +498,7 @@
     "flaky": false, 
     "gtest": false, 
     "language": "c", 
-    "name": "dns_resolver_cooldown_using_ares_resolver_test", 
-    "platforms": [
-      "linux", 
-      "mac", 
-      "posix", 
-      "windows"
-    ], 
-    "uses_polling": true
-  }, 
-  {
-    "args": [
-      "--resolver=native"
-    ], 
-    "benchmark": false, 
-    "ci_platforms": [
-      "linux", 
-      "mac", 
-      "posix", 
-      "windows"
-    ], 
-    "cpu_cost": 1.0, 
-    "exclude_configs": [], 
-    "exclude_iomgrs": [], 
-    "flaky": false, 
-    "gtest": false, 
-    "language": "c", 
-    "name": "dns_resolver_cooldown_using_native_resolver_test", 
+    "name": "dns_resolver_cooldown_test", 
     "platforms": [
       "linux", 
       "mac", 
@@ -1356,30 +1328,6 @@
     "flaky": false, 
     "gtest": false, 
     "language": "c", 
-    "name": "grpc_control_plane_credentials_test", 
-    "platforms": [
-      "linux", 
-      "mac", 
-      "posix", 
-      "windows"
-    ], 
-    "uses_polling": true
-  }, 
-  {
-    "args": [], 
-    "benchmark": false, 
-    "ci_platforms": [
-      "linux", 
-      "mac", 
-      "posix", 
-      "windows"
-    ], 
-    "cpu_cost": 1.0, 
-    "exclude_configs": [], 
-    "exclude_iomgrs": [], 
-    "flaky": false, 
-    "gtest": false, 
-    "language": "c", 
     "name": "grpc_credentials_test", 
     "platforms": [
       "linux", 
@@ -2003,30 +1951,6 @@
     "gtest": false, 
     "language": "c", 
     "name": "minimal_stack_is_minimal_test", 
-    "platforms": [
-      "linux", 
-      "mac", 
-      "posix", 
-      "windows"
-    ], 
-    "uses_polling": false
-  }, 
-  {
-    "args": [], 
-    "benchmark": false, 
-    "ci_platforms": [
-      "linux", 
-      "mac", 
-      "posix", 
-      "windows"
-    ], 
-    "cpu_cost": 1.0, 
-    "exclude_configs": [], 
-    "exclude_iomgrs": [], 
-    "flaky": false, 
-    "gtest": false, 
-    "language": "c", 
-    "name": "mpmcqueue_test", 
     "platforms": [
       "linux", 
       "mac", 
@@ -2816,30 +2740,6 @@
       "windows"
     ], 
     "uses_polling": true
-  }, 
-  {
-    "args": [], 
-    "benchmark": false, 
-    "ci_platforms": [
-      "linux", 
-      "mac", 
-      "posix", 
-      "windows"
-    ], 
-    "cpu_cost": 1.0, 
-    "exclude_configs": [], 
-    "exclude_iomgrs": [], 
-    "flaky": false, 
-    "gtest": false, 
-    "language": "c", 
-    "name": "threadpool_test", 
-    "platforms": [
-      "linux", 
-      "mac", 
-      "posix", 
-      "windows"
-    ], 
-    "uses_polling": false
   }, 
   {
     "args": [], 
@@ -3941,28 +3841,6 @@
     "flaky": false, 
     "gtest": false, 
     "language": "c++", 
-    "name": "bm_threadpool", 
-    "platforms": [
-      "linux", 
-      "mac", 
-      "posix"
-    ], 
-    "uses_polling": false
-  }, 
-  {
-    "args": [], 
-    "benchmark": true, 
-    "ci_platforms": [
-      "linux", 
-      "mac", 
-      "posix"
-    ], 
-    "cpu_cost": 1.0, 
-    "exclude_configs": [], 
-    "exclude_iomgrs": [], 
-    "flaky": false, 
-    "gtest": false, 
-    "language": "c++", 
     "name": "bm_timer", 
     "platforms": [
       "linux", 
@@ -4554,30 +4432,6 @@
       "posix", 
       "windows"
     ], 
-    "cpu_cost": 1.0, 
-    "exclude_configs": [], 
-    "exclude_iomgrs": [], 
-    "flaky": false, 
-    "gtest": true, 
-    "language": "c++", 
-    "name": "delegating_channel_test", 
-    "platforms": [
-      "linux", 
-      "mac", 
-      "posix", 
-      "windows"
-    ], 
-    "uses_polling": true
-  }, 
-  {
-    "args": [], 
-    "benchmark": false, 
-    "ci_platforms": [
-      "linux", 
-      "mac", 
-      "posix", 
-      "windows"
-    ], 
     "cpu_cost": 0.5, 
     "exclude_configs": [], 
     "exclude_iomgrs": [], 
@@ -4904,24 +4758,6 @@
       "mac", 
       "posix", 
       "windows"
-    ], 
-    "uses_polling": true
-  }, 
-  {
-    "args": [], 
-    "benchmark": false, 
-    "ci_platforms": [
-      "linux"
-    ], 
-    "cpu_cost": 1.0, 
-    "exclude_configs": [], 
-    "exclude_iomgrs": [], 
-    "flaky": false, 
-    "gtest": false, 
-    "language": "c++", 
-    "name": "grpclb_fallback_test", 
-    "platforms": [
-      "linux"
     ], 
     "uses_polling": true
   }, 
@@ -5907,30 +5743,6 @@
     "exclude_configs": [], 
     "exclude_iomgrs": [], 
     "flaky": false, 
-    "gtest": true, 
-    "language": "c++", 
-    "name": "string_view_test", 
-    "platforms": [
-      "linux", 
-      "mac", 
-      "posix", 
-      "windows"
-    ], 
-    "uses_polling": true
-  }, 
-  {
-    "args": [], 
-    "benchmark": false, 
-    "ci_platforms": [
-      "linux", 
-      "mac", 
-      "posix", 
-      "windows"
-    ], 
-    "cpu_cost": 1.0, 
-    "exclude_configs": [], 
-    "exclude_iomgrs": [], 
-    "flaky": false, 
     "gtest": false, 
     "language": "c++", 
     "name": "thread_manager_test", 
@@ -6123,32 +5935,6 @@
     "flaky": false, 
     "gtest": false, 
     "language": "c++", 
-    "name": "bad_streaming_id_bad_client_test", 
-    "platforms": [
-      "linux", 
-      "mac", 
-      "posix", 
-      "windows"
-    ], 
-    "uses_polling": true
-  }, 
-  {
-    "args": [], 
-    "benchmark": false, 
-    "ci_platforms": [
-      "linux", 
-      "mac", 
-      "posix", 
-      "windows"
-    ], 
-    "cpu_cost": 1.0, 
-    "exclude_configs": [], 
-    "exclude_iomgrs": [
-      "uv"
-    ], 
-    "flaky": false, 
-    "gtest": false, 
-    "language": "c++", 
     "name": "badreq_bad_client_test", 
     "platforms": [
       "linux", 
@@ -6306,32 +6092,6 @@
     "gtest": false, 
     "language": "c++", 
     "name": "large_metadata_bad_client_test", 
-    "platforms": [
-      "linux", 
-      "mac", 
-      "posix", 
-      "windows"
-    ], 
-    "uses_polling": true
-  }, 
-  {
-    "args": [], 
-    "benchmark": false, 
-    "ci_platforms": [
-      "linux", 
-      "mac", 
-      "posix", 
-      "windows"
-    ], 
-    "cpu_cost": 1.0, 
-    "exclude_configs": [], 
-    "exclude_iomgrs": [
-      "uv"
-    ], 
-    "flaky": false, 
-    "gtest": false, 
-    "language": "c++", 
-    "name": "out_of_bounds_bad_client_test", 
     "platforms": [
       "linux", 
       "mac", 

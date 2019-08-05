@@ -27,17 +27,16 @@
 
 #include <grpc/compression.h>
 #include <grpc/support/atm.h>
-#include <grpcpp/channel_impl.h>
-#include <grpcpp/completion_queue_impl.h>
+#include <grpcpp/channel.h>
+#include <grpcpp/completion_queue.h>
 #include <grpcpp/health_check_service_interface.h>
 #include <grpcpp/impl/call.h>
 #include <grpcpp/impl/codegen/client_interceptor.h>
-#include <grpcpp/impl/codegen/completion_queue_impl.h>
 #include <grpcpp/impl/codegen/grpc_library.h>
 #include <grpcpp/impl/codegen/server_interface.h>
 #include <grpcpp/impl/rpc_service_method.h>
 #include <grpcpp/security/server_credentials.h>
-#include <grpcpp/support/channel_arguments_impl.h>
+#include <grpcpp/support/channel_arguments.h>
 #include <grpcpp/support/config.h>
 #include <grpcpp/support/status.h>
 
@@ -81,7 +80,7 @@ class Server : public grpc::ServerInterface, private grpc::GrpcLibraryCodegen {
    public:
     virtual ~GlobalCallbacks() {}
     /// Called before server is created.
-    virtual void UpdateArguments(ChannelArguments* args) {}
+    virtual void UpdateArguments(grpc::ChannelArguments* args) {}
     /// Called before application callback for each synchronous server request
     virtual void PreSynchronousRequest(grpc_impl::ServerContext* context) = 0;
     /// Called after application callback for each synchronous server request
@@ -109,7 +108,8 @@ class Server : public grpc::ServerInterface, private grpc::GrpcLibraryCodegen {
   }
 
   /// Establish a channel for in-process communication
-  std::shared_ptr<Channel> InProcessChannel(const ChannelArguments& args);
+  std::shared_ptr<::grpc::Channel> InProcessChannel(
+      const grpc::ChannelArguments& args);
 
   /// NOTE: class experimental_type is not part of the public API of this class.
   /// TODO(yashykt): Integrate into public API when this is no longer
@@ -120,8 +120,8 @@ class Server : public grpc::ServerInterface, private grpc::GrpcLibraryCodegen {
 
     /// Establish a channel for in-process communication with client
     /// interceptors
-    std::shared_ptr<Channel> InProcessChannelWithInterceptors(
-        const ChannelArguments& args,
+    std::shared_ptr<::grpc::Channel> InProcessChannelWithInterceptors(
+        const grpc::ChannelArguments& args,
         std::vector<std::unique_ptr<
             grpc::experimental::ClientInterceptorFactoryInterface>>
             interceptor_creators);
@@ -182,18 +182,19 @@ class Server : public grpc::ServerInterface, private grpc::GrpcLibraryCodegen {
   ///
   /// \param sync_cq_timeout_msec The timeout to use when calling AsyncNext() on
   /// server completion queues passed via sync_server_cqs param.
-  Server(int max_message_size, ChannelArguments* args,
-         std::shared_ptr<std::vector<std::unique_ptr<ServerCompletionQueue>>>
-             sync_server_cqs,
-         int min_pollers, int max_pollers, int sync_cq_timeout_msec,
-         std::vector<
-             std::shared_ptr<grpc::internal::ExternalConnectionAcceptorImpl>>
-             acceptors,
-         grpc_resource_quota* server_rq = nullptr,
-         std::vector<std::unique_ptr<
-             grpc::experimental::ServerInterceptorFactoryInterface>>
-             interceptor_creators = std::vector<std::unique_ptr<
-                 grpc::experimental::ServerInterceptorFactoryInterface>>());
+  Server(
+      int max_message_size, grpc::ChannelArguments* args,
+      std::shared_ptr<std::vector<std::unique_ptr<grpc::ServerCompletionQueue>>>
+          sync_server_cqs,
+      int min_pollers, int max_pollers, int sync_cq_timeout_msec,
+      std::vector<
+          std::shared_ptr<grpc::internal::ExternalConnectionAcceptorImpl>>
+          acceptors,
+      grpc_resource_quota* server_rq = nullptr,
+      std::vector<std::unique_ptr<
+          grpc::experimental::ServerInterceptorFactoryInterface>>
+          interceptor_creators = std::vector<std::unique_ptr<
+              grpc::experimental::ServerInterceptorFactoryInterface>>());
 
   /// Start the server.
   ///
@@ -201,7 +202,7 @@ class Server : public grpc::ServerInterface, private grpc::GrpcLibraryCodegen {
   /// caller is required to keep all completion queues live until the server is
   /// destroyed.
   /// \param num_cqs How many completion queues does \a cqs hold.
-  void Start(ServerCompletionQueue** cqs, size_t num_cqs) override;
+  void Start(grpc::ServerCompletionQueue** cqs, size_t num_cqs) override;
 
   grpc_server* server() override { return server_; }
 
@@ -282,7 +283,7 @@ class Server : public grpc::ServerInterface, private grpc::GrpcLibraryCodegen {
     return max_receive_message_size_;
   }
 
-  CompletionQueue* CallbackCQ() override;
+  grpc::CompletionQueue* CallbackCQ() override;
 
   grpc_impl::ServerInitializer* initializer();
 
@@ -303,7 +304,7 @@ class Server : public grpc::ServerInterface, private grpc::GrpcLibraryCodegen {
   /// The following completion queues are ONLY used in case of Sync API
   /// i.e. if the server has any services with sync methods. The server uses
   /// these completion queues to poll for new RPCs
-  std::shared_ptr<std::vector<std::unique_ptr<ServerCompletionQueue>>>
+  std::shared_ptr<std::vector<std::unique_ptr<grpc::ServerCompletionQueue>>>
       sync_server_cqs_;
 
   /// List of \a ThreadManager instances (one for each cq in
@@ -341,7 +342,7 @@ class Server : public grpc::ServerInterface, private grpc::GrpcLibraryCodegen {
   // during decreasing load, so it is less performance-critical.
   grpc::internal::Mutex callback_reqs_mu_;
   grpc::internal::CondVar callback_reqs_done_cv_;
-  std::atomic<intptr_t> callback_reqs_outstanding_{0};
+  std::atomic_int callback_reqs_outstanding_{0};
 
   std::shared_ptr<GlobalCallbacks> global_callbacks_;
 
@@ -373,7 +374,7 @@ class Server : public grpc::ServerInterface, private grpc::GrpcLibraryCodegen {
   // It is _not owned_ by the server; ownership belongs with its internal
   // shutdown callback tag (invoked when the CQ is fully shutdown).
   // It is protected by mu_
-  CompletionQueue* callback_cq_ = nullptr;
+  grpc::CompletionQueue* callback_cq_ = nullptr;
 };
 
 }  // namespace grpc_impl

@@ -1057,99 +1057,54 @@ class ObjCLanguage(object):
         _check_compiler(self.args.compiler, ['default'])
 
     def test_specs(self):
-        out = []
-        out.append(
+        return [
+            self.config.job_spec(
+                ['src/objective-c/tests/run_tests.sh'],
+                timeout_seconds=60 * 60,
+                shortname='objc-tests',
+                cpu_cost=1e6,
+                environ=_FORCE_ENVIRON_FOR_WRAPPERS),
+            self.config.job_spec(
+                ['src/objective-c/tests/run_plugin_tests.sh'],
+                timeout_seconds=60 * 60,
+                shortname='objc-plugin-tests',
+                cpu_cost=1e6,
+                environ=_FORCE_ENVIRON_FOR_WRAPPERS),
             self.config.job_spec(
                 ['src/objective-c/tests/build_one_example.sh'],
                 timeout_seconds=10 * 60,
-                shortname='ios-buildtest-example-sample',
+                shortname='objc-build-example-sample',
                 cpu_cost=1e6,
                 environ={
                     'SCHEME': 'Sample',
-                    'EXAMPLE_PATH': 'src/objective-c/examples/Sample',
-                    'FRAMEWORKS': 'NO'
-                }))
-        out.append(
+                    'EXAMPLE_PATH': 'src/objective-c/examples/Sample'
+                }),
             self.config.job_spec(
                 ['src/objective-c/tests/build_one_example.sh'],
                 timeout_seconds=10 * 60,
-                shortname='ios-buildtest-example-sample-frameworks',
+                shortname='objc-build-example-sample-frameworks',
                 cpu_cost=1e6,
                 environ={
                     'SCHEME': 'Sample',
                     'EXAMPLE_PATH': 'src/objective-c/examples/Sample',
                     'FRAMEWORKS': 'YES'
-                }))
-        out.append(
+                }),
             self.config.job_spec(
                 ['src/objective-c/tests/build_one_example.sh'],
                 timeout_seconds=10 * 60,
-                shortname='ios-buildtest-example-switftsample',
+                shortname='objc-build-example-switftsample',
                 cpu_cost=1e6,
                 environ={
                     'SCHEME': 'SwiftSample',
                     'EXAMPLE_PATH': 'src/objective-c/examples/SwiftSample'
-                }))
-        out.append(
-            self.config.job_spec(
-                ['src/objective-c/tests/run_plugin_tests.sh'],
-                timeout_seconds=60 * 60,
-                shortname='ios-test-plugintest',
-                cpu_cost=1e6,
-                environ=_FORCE_ENVIRON_FOR_WRAPPERS))
-        out.append(
+                }),
             self.config.job_spec(
                 ['test/core/iomgr/ios/CFStreamTests/run_tests.sh'],
                 timeout_seconds=20 * 60,
-                shortname='ios-test-cfstream-tests',
+                shortname='cfstream-tests',
                 cpu_cost=1e6,
-                environ=_FORCE_ENVIRON_FOR_WRAPPERS))
-        out.append(
-            self.config.job_spec(
-                ['src/objective-c/tests/run_one_test.sh'],
-                timeout_seconds=60 * 60,
-                shortname='ios-test-unittests',
-                cpu_cost=1e6,
-                environ={
-                    'SCHEME': 'UnitTests'
-                }))
-        out.append(
-            self.config.job_spec(
-                ['src/objective-c/tests/run_one_test.sh'],
-                timeout_seconds=60 * 60,
-                shortname='ios-test-interoptests',
-                cpu_cost=1e6,
-                environ={
-                    'SCHEME': 'InteropTests'
-                }))
-        out.append(
-            self.config.job_spec(
-                ['src/objective-c/tests/run_one_test.sh'],
-                timeout_seconds=60 * 60,
-                shortname='ios-test-cronettests',
-                cpu_cost=1e6,
-                environ={
-                    'SCHEME': 'CronetTests'
-                }))
-        out.append(
-            self.config.job_spec(
-                ['test/cpp/ios/run_tests.sh'],
-                timeout_seconds=20 * 60,
-                shortname='ios-cpp-test-cronet',
-                cpu_cost=1e6,
-                environ=_FORCE_ENVIRON_FOR_WRAPPERS))
-        out.append(
-            self.config.job_spec(
-                ['src/objective-c/tests/run_one_test.sh'],
-                timeout_seconds=60 * 60,
-                shortname='mac-test-basictests',
-                cpu_cost=1e6,
-                environ={
-                    'SCHEME': 'MacTests',
-                    'PLATFORM': 'macos'
-                }))
-
-        return sorted(out)
+                environ=_FORCE_ENVIRON_FOR_WRAPPERS),
+        ]
 
     def pre_build_steps(self):
         return []
@@ -1164,7 +1119,6 @@ class ObjCLanguage(object):
         return [
             ['src/objective-c/tests/build_tests.sh'],
             ['test/core/iomgr/ios/CFStreamTests/build_tests.sh'],
-            ['test/cpp/ios/build_tests.sh'],
         ]
 
     def post_tests_steps(self):

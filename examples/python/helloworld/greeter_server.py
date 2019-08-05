@@ -30,14 +30,20 @@ class Greeter(helloworld_pb2_grpc.GreeterServicer):
     def SayHello(self, request, context):
         return helloworld_pb2.HelloReply(message='Hello, %s!' % request.name)
 
+    def SayHelloAgain(self, request, context):
+        return helloworld_pb2.HelloReply(message='Hello again, %s!' % request.name)
 
 def serve():
+    print('serve')
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     helloworld_pb2_grpc.add_GreeterServicer_to_server(Greeter(), server)
-    server.add_insecure_port('[::]:50051')
+    server.add_insecure_port('127.0.0.1:50051')
+    #server.add_insecure_port('0.0.0.0:50051')
+    print('server.start')
     server.start()
     try:
         while True:
+            print('sleep')
             time.sleep(_ONE_DAY_IN_SECONDS)
     except KeyboardInterrupt:
         server.stop(0)

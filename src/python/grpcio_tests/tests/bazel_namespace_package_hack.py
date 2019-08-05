@@ -16,8 +16,6 @@ import os
 import site
 import sys
 
-_GRPC_BAZEL_RUNTIME_ENV = "GRPC_BAZEL_RUNTIME"
-
 
 # TODO(https://github.com/bazelbuild/bazel/issues/6844) Bazel failed to
 # interpret namespace packages correctly. This monkey patch will force the
@@ -26,15 +24,9 @@ _GRPC_BAZEL_RUNTIME_ENV = "GRPC_BAZEL_RUNTIME"
 # Analysis in depth: https://github.com/bazelbuild/rules_python/issues/55
 def sys_path_to_site_dir_hack():
     """Add valid sys.path item to site directory to parse the .pth files."""
-    # Only run within our Bazel environment
-    if not os.environ.get(_GRPC_BAZEL_RUNTIME_ENV):
-        return
-    items = []
     for item in sys.path:
         if os.path.exists(item):
             # The only difference between sys.path and site-directory is
             # whether the .pth file will be parsed or not. A site-directory
             # will always exist in sys.path, but not another way around.
-            items.append(item)
-    for item in items:
-        site.addsitedir(item)
+            site.addsitedir(item)

@@ -34,22 +34,18 @@ LANGUAGES = [
 
 class Version:
 
-    def __init__(self, version_str, override_major=None):
+    def __init__(self, s):
         self.tag = None
-        if '-' in version_str:
-            version_str, self.tag = version_str.split('-')
-        self.major, self.minor, self.patch = [
-            int(x) for x in version_str.split('.')
-        ]
-        if override_major:
-            self.major = override_major
+        if '-' in s:
+            s, self.tag = s.split('-')
+        self.major, self.minor, self.patch = [int(x) for x in s.split('.')]
 
     def __str__(self):
         """Version string in a somewhat idiomatic style for most languages"""
-        version_str = '%d.%d.%d' % (self.major, self.minor, self.patch)
+        s = '%d.%d.%d' % (self.major, self.minor, self.patch)
         if self.tag:
-            version_str += '-%s' % self.tag
-        return version_str
+            s += '-%s' % self.tag
+        return s
 
     def pep440(self):
         """Version string in Python PEP440 style"""
@@ -109,15 +105,11 @@ def mako_plugin(dictionary):
   """
 
     settings = dictionary['settings']
-    version_str = settings['version']
-    master_version = Version(version_str)
+    master_version = Version(settings['version'])
     settings['version'] = master_version
     for language in LANGUAGES:
         version_tag = '%s_version' % language
-        override_major = settings.get('%s_major_version' % language, None)
         if version_tag in settings:
-            settings[version_tag] = Version(
-                settings[version_tag], override_major=override_major)
+            settings[version_tag] = Version(settings[version_tag])
         else:
-            settings[version_tag] = Version(
-                version_str, override_major=override_major)
+            settings[version_tag] = master_version

@@ -84,10 +84,6 @@ class ChannelArgumentsTest : public ::testing::Test {
     channel_args.SetChannelArgs(args);
   }
 
-  static void SetUpTestCase() { grpc_init(); }
-
-  static void TearDownTestCase() { grpc_shutdown(); }
-
   grpc::string GetDefaultUserAgentPrefix() {
     std::ostringstream user_agent_prefix;
     user_agent_prefix << "grpc-c++/" << Version();
@@ -256,6 +252,8 @@ TEST_F(ChannelArgumentsTest, SetUserAgentPrefix) {
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
+  grpc_init();
   int ret = RUN_ALL_TESTS();
+  grpc_shutdown();
   return ret;
 }

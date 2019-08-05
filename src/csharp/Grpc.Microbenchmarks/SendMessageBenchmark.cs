@@ -1,4 +1,4 @@
-#region Copyright notice and license
+﻿#region Copyright notice and license
 
 // Copyright 2015 gRPC authors.
 //
@@ -17,48 +17,59 @@
 #endregion
 
 using System;
-using BenchmarkDotNet.Attributes;
+using System.Threading;
 using Grpc.Core;
 using Grpc.Core.Internal;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Grpc.Microbenchmarks
 {
-    public class SendMessageBenchmark : CommonThreadedBase
+    public class SendMessageBenchmark
     {
         static readonly NativeMethods Native = NativeMethods.Get();
 
-        public override void Setup()
+        GrpcEnvironment environment;
+
+        public void Init()
         {
             Native.grpcsharp_test_override_method("grpcsharp_call_start_batch", "nop");
-            base.Setup();
+            environment = GrpcEnvironment.AddRef();
         }
 
-        [Params(0)]
-        public int PayloadSize { get; set; }
-
-        const int Iterations = 1000000;  // High number to make the overhead of RunConcurrent negligible.
-        [Benchmark(OperationsPerInvoke = Iterations)]
-        public void SendMessage()
+        public void Cleanup()
         {
-            RunConcurrent(RunBody);
+            GrpcEnvironment.ReleaseAsync().Wait();
+            // TODO(jtattermusch): track GC stats
         }
 
-        private void RunBody()
+        public void Run(int threadCount, int iterations, int payloadSize)
         {
-            var completionRegistry = new CompletionRegistry(Environment, () => Environment.BatchContextPool.Lease(), () => throw new NotImplementedException());
+            Console.WriteLine(string.Format("SendMessageBenchmark: threads={0}, iterations={1}, payloadSize={2}", threadCount, iterations, payloadSize));
+            var threadedBenchmark = new ThreadedBenchmark(threadCount, () => ThreadBody(iterations, payloadSize));
+            threadedBenchmark.Run();
+        }
+
+        private void ThreadBody(int iterations, int payloadSize)
+        {
+            var completionRegistry = new CompletionRegistry(environment, () => environment.BatchContextPool.Lease(), () => throw new NotImplementedException());
             var cq = CompletionQueueSafeHandle.CreateAsync(completionRegistry);
             var call = CreateFakeCall(cq);
 
             var sendCompletionCallback = new NopSendCompletionCallback();
-            var payload = new byte[PayloadSize];
+            var payload = new byte[payloadSize];
             var writeFlags = default(WriteFlags);
 
-            for (int i = 0; i < Iterations; i++)
+            var stopwatch = Stopwatch.StartNew();
+            for (int i = 0; i < iterations; i++)
             {
                 call.StartSendMessage(sendCompletionCallback, payload, writeFlags, false);
                 var callback = completionRegistry.Extract(completionRegistry.LastRegisteredKey);
                 callback.OnComplete(true);
             }
+            stopwatch.Stop();
+            Console.WriteLine("Elapsed millis: " + stopwatch.ElapsedMilliseconds);
+
             cq.Dispose();
         }
 

@@ -166,24 +166,6 @@ grpc_cc_test(
 )
 
 grpc_cc_test(
-    name = "delegating_channel_test",
-    srcs = ["delegating_channel_test.cc"],
-    external_deps = [
-        "gtest",
-    ],
-    deps = [
-        ":test_service_impl",
-        "//:gpr",
-        "//:grpc",
-        "//:grpc++",
-        "//src/proto/grpc/testing:echo_messages_proto",
-        "//src/proto/grpc/testing:echo_proto",
-        "//test/core/util:grpc_test_util",
-        "//test/cpp/util:test_util",
-    ],
-)
-
-grpc_cc_test(
     name = "client_interceptors_end2end_test",
     srcs = ["client_interceptors_end2end_test.cc"],
     external_deps = [
@@ -387,6 +369,7 @@ grpc_cc_test(
     name = "mock_test",
     srcs = ["mock_test.cc"],
     external_deps = [
+        "gmock",
         "gtest",
     ],
     deps = [
@@ -423,6 +406,7 @@ grpc_cc_test(
     name = "client_lb_end2end_test",
     srcs = ["client_lb_end2end_test.cc"],
     external_deps = [
+        "gmock",
         "gtest",
     ],
     deps = [
@@ -443,6 +427,7 @@ grpc_cc_test(
     name = "service_config_end2end_test",
     srcs = ["service_config_end2end_test.cc"],
     external_deps = [
+        "gmock",
         "gtest",
     ],
     deps = [
@@ -462,6 +447,7 @@ grpc_cc_test(
     name = "grpclb_end2end_test",
     srcs = ["grpclb_end2end_test.cc"],
     external_deps = [
+        "gmock",
         "gtest",
     ],
     deps = [
@@ -483,6 +469,7 @@ grpc_cc_test(
     name = "xds_end2end_test",
     srcs = ["xds_end2end_test.cc"],
     external_deps = [
+        "gmock",
         "gtest",
     ],
     deps = [
@@ -607,6 +594,7 @@ grpc_cc_test(
     srcs = ["server_load_reporting_end2end_test.cc"],
     external_deps = [
         "gtest",
+        "gmock",
     ],
     deps = [
         "//:grpcpp_server_load_reporting",

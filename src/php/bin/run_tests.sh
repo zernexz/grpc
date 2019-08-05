@@ -25,18 +25,8 @@ export DYLD_LIBRARY_PATH=$root/libs/$CONFIG
 $(which php) $extension_dir -d max_execution_time=300 $(which phpunit) -v --debug \
   --exclude-group persistent_list_bound_tests ../tests/unit_tests
 
-for arg in "$@"
-do
-  if [[ "$arg" == "--skip-persistent-channel-tests" ]]; then
-    SKIP_PERSISTENT_CHANNEL_TESTS=true
-    break
-  fi
-done
-
-if [[ "$SKIP_PERSISTENT_CHANNEL_TESTS" != "true" ]]; then
-   $(which php) $extension_dir -d max_execution_time=300 $(which phpunit) -v --debug \
-     ../tests/unit_tests/PersistentChannelTests
-fi
+$(which php) $extension_dir -d max_execution_time=300 $(which phpunit) -v --debug \
+  ../tests/unit_tests/PersistentChannelTests
 
 export ZEND_DONT_UNLOAD_MODULES=1
 export USE_ZEND_ALLOC=0

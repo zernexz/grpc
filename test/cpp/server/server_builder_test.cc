@@ -44,19 +44,13 @@ const grpc::string& GetPort() {
   return g_port;
 }
 
-class ServerBuilderTest : public ::testing::Test {
- protected:
-  static void SetUpTestCase() { grpc_init(); }
+TEST(ServerBuilderTest, NoOp) { ServerBuilder b; }
 
-  static void TearDownTestCase() { grpc_shutdown(); }
-};
-TEST_F(ServerBuilderTest, NoOp) { ServerBuilder b; }
-
-TEST_F(ServerBuilderTest, CreateServerNoPorts) {
+TEST(ServerBuilderTest, CreateServerNoPorts) {
   ServerBuilder().RegisterService(&g_service).BuildAndStart()->Shutdown();
 }
 
-TEST_F(ServerBuilderTest, CreateServerOnePort) {
+TEST(ServerBuilderTest, CreateServerOnePort) {
   ServerBuilder()
       .RegisterService(&g_service)
       .AddListeningPort(GetPort(), InsecureServerCredentials())
@@ -64,7 +58,7 @@ TEST_F(ServerBuilderTest, CreateServerOnePort) {
       ->Shutdown();
 }
 
-TEST_F(ServerBuilderTest, CreateServerRepeatedPort) {
+TEST(ServerBuilderTest, CreateServerRepeatedPort) {
   ServerBuilder()
       .RegisterService(&g_service)
       .AddListeningPort(GetPort(), InsecureServerCredentials())
@@ -73,7 +67,7 @@ TEST_F(ServerBuilderTest, CreateServerRepeatedPort) {
       ->Shutdown();
 }
 
-TEST_F(ServerBuilderTest, CreateServerRepeatedPortWithDisallowedReusePort) {
+TEST(ServerBuilderTest, CreateServerRepeatedPortWithDisallowedReusePort) {
   EXPECT_EQ(ServerBuilder()
                 .RegisterService(&g_service)
                 .AddListeningPort(GetPort(), InsecureServerCredentials())
@@ -88,6 +82,8 @@ TEST_F(ServerBuilderTest, CreateServerRepeatedPortWithDisallowedReusePort) {
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
+  grpc_init();
   int ret = RUN_ALL_TESTS();
+  grpc_shutdown();
   return ret;
 }

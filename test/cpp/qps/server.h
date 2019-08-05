@@ -21,7 +21,6 @@
 
 #include <grpc/support/cpu.h>
 #include <grpc/support/log.h>
-#include <grpcpp/channel.h>
 #include <grpcpp/resource_quota.h>
 #include <grpcpp/security/server_credentials.h>
 #include <grpcpp/server_builder.h>

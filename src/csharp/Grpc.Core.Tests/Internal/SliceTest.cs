@@ -33,7 +33,7 @@ namespace Grpc.Core.Internal.Tests
         [TestCase(10)]
         [TestCase(100)]
         [TestCase(1000)]
-        public void SliceFromNativePtr_Copy(int bufferLength)
+        public void SliceFromNativePtr_CopyToArraySegment(int bufferLength)
         {
             var origBuffer = GetTestBuffer(bufferLength);
             var gcHandle = GCHandle.Alloc(origBuffer, GCHandleType.Pinned);
@@ -43,8 +43,25 @@ namespace Grpc.Core.Internal.Tests
                 Assert.AreEqual(bufferLength, slice.Length);
 
                 var newBuffer = new byte[bufferLength];
-                slice.ToSpanUnsafe().CopyTo(newBuffer);
+                slice.CopyTo(new ArraySegment<byte>(newBuffer));
                 CollectionAssert.AreEqual(origBuffer, newBuffer);
+            }
+            finally
+            {
+                gcHandle.Free();
+            }
+        }
+
+        [TestCase]
+        public void SliceFromNativePtr_CopyToArraySegmentTooSmall()
+        {
+            var origBuffer = GetTestBuffer(100);
+            var gcHandle = GCHandle.Alloc(origBuffer, GCHandleType.Pinned);
+            try
+            {
+                var slice = new Slice(gcHandle.AddrOfPinnedObject(), origBuffer.Length);
+                var tooSmall = new byte[origBuffer.Length - 1];
+                Assert.Catch(typeof(ArgumentException), () => slice.CopyTo(new ArraySegment<byte>(tooSmall)));
             }
             finally
             {

@@ -48,6 +48,8 @@ static void test_static_lookup(void) {
   grpc_core::ExecCtx exec_ctx;
   grpc_chttp2_hptbl tbl;
 
+  grpc_chttp2_hptbl_init(&tbl);
+
   LOG_TEST("test_static_lookup");
   assert_index(&tbl, 1, ":authority", "");
   assert_index(&tbl, 2, ":method", "GET");
@@ -123,6 +125,7 @@ static void test_many_additions(void) {
   LOG_TEST("test_many_additions");
 
   grpc_core::ExecCtx exec_ctx;
+  grpc_chttp2_hptbl_init(&tbl);
 
   for (i = 0; i < 100000; i++) {
     grpc_mdelem elem;
@@ -169,6 +172,7 @@ static void test_find(void) {
 
   LOG_TEST("test_find");
 
+  grpc_chttp2_hptbl_init(&tbl);
   elem = grpc_mdelem_from_slices(grpc_slice_from_static_string("abc"),
                                  grpc_slice_from_static_string("xyz"));
   GPR_ASSERT(grpc_chttp2_hptbl_add(&tbl, elem) == GRPC_ERROR_NONE);

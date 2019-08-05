@@ -103,7 +103,7 @@ namespace Grpc.Core.Internal.Tests
         private void AssertSliceDataEqual(byte[] expected, Slice actual)
         {
             var actualSliceData = new byte[actual.Length];
-            actual.ToSpanUnsafe().CopyTo(actualSliceData);
+            actual.CopyTo(new ArraySegment<byte>(actualSliceData));
             CollectionAssert.AreEqual(expected, actualSliceData);
         }
 

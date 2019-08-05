@@ -69,7 +69,7 @@
     return 'endif()\n'
   %>
 
-  cmake_minimum_required(VERSION 3.5.1)
+  cmake_minimum_required(VERSION 2.8)
 
   set(PACKAGE_NAME      "grpc")
   set(PACKAGE_VERSION   "${settings.cpp_version}")
@@ -467,13 +467,6 @@
     )
   endif (_gRPC_PLATFORM_ANDROID)
   % endif
-  % if lib.name in ["grpc", "grpc_cronet", "grpc_test_util", \
-                    "grpc_test_util_unsecure", "grpc_unsecure", \
-                    "grpc++_cronet"]:
-  if (_gRPC_PLATFORM_IOS OR _gRPC_PLATFORM_MAC)
-    target_link_libraries(${lib.name} "-framework CoreFoundation")
-  endif()
-  %endif
 
   % if len(lib.get('public_headers', [])) > 0:
   foreach(_hdr

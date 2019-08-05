@@ -1,4 +1,4 @@
-#region Copyright notice and license
+﻿#region Copyright notice and license
 
 // Copyright 2015 gRPC authors.
 //
@@ -17,38 +17,62 @@
 #endregion
 
 using System;
-using BenchmarkDotNet.Attributes;
+using System.Runtime.InteropServices;
+using System.Threading;
+using Grpc.Core;
 using Grpc.Core.Internal;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Grpc.Microbenchmarks
 {
-    public class CompletionRegistryBenchmark : CommonThreadedBase
+    public class CompletionRegistryBenchmark
     {
-        [Params(false, true)]
-        public bool UseSharedRegistry { get; set; }
+        GrpcEnvironment environment;
 
-        const int Iterations = 1000000;  // High number to make the overhead of RunConcurrent negligible.
-        [Benchmark(OperationsPerInvoke = Iterations)]
-        public void RegisterExtract()
+        public void Init()
         {
-            RunConcurrent(() => {
-                CompletionRegistry sharedRegistry = UseSharedRegistry ? new CompletionRegistry(Environment, () => BatchContextSafeHandle.Create(), () => RequestCallContextSafeHandle.Create()) : null;
-                RunBody(sharedRegistry);
-            });
+            environment = GrpcEnvironment.AddRef();
         }
 
-        private void RunBody(CompletionRegistry optionalSharedRegistry)
+        public void Cleanup()
         {
-            var completionRegistry = optionalSharedRegistry ?? new CompletionRegistry(Environment, () => throw new NotImplementedException(), () => throw new NotImplementedException());
-            var ctx = BatchContextSafeHandle.Create();
+            GrpcEnvironment.ReleaseAsync().Wait();
+        }
 
-            for (int i = 0; i < Iterations; i++)
+        public void Run(int threadCount, int iterations, bool useSharedRegistry)
+        {
+            Console.WriteLine(string.Format("CompletionRegistryBenchmark: threads={0}, iterations={1}, useSharedRegistry={2}", threadCount, iterations, useSharedRegistry));
+            CompletionRegistry sharedRegistry = useSharedRegistry ? new CompletionRegistry(environment, () => BatchContextSafeHandle.Create(), () => RequestCallContextSafeHandle.Create()) : null;
+            var threadedBenchmark = new ThreadedBenchmark(threadCount, () => ThreadBody(iterations, sharedRegistry));
+            threadedBenchmark.Run();
+            // TODO: parametrize by number of pending completions
+        }
+
+        private void ThreadBody(int iterations, CompletionRegistry optionalSharedRegistry)
+        {
+            var completionRegistry = optionalSharedRegistry ?? new CompletionRegistry(environment, () => throw new NotImplementedException(), () => throw new NotImplementedException());
+            var ctx = BatchContextSafeHandle.Create();
+  
+            var stopwatch = Stopwatch.StartNew();
+            for (int i = 0; i < iterations; i++)
             {
                 completionRegistry.Register(ctx.Handle, ctx);
                 var callback = completionRegistry.Extract(ctx.Handle);
                 // NOTE: we are not calling the callback to avoid disposing ctx.
             }
+            stopwatch.Stop();
+            Console.WriteLine("Elapsed millis: " + stopwatch.ElapsedMilliseconds);          
+
             ctx.Recycle();
+        }
+
+        private class NopCompletionCallback : IOpCompletionCallback
+        {
+            public void OnComplete(bool success)
+            {
+
+            }
         }
     }
 }

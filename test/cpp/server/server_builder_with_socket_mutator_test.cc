@@ -86,14 +86,7 @@ class MockSocketMutatorServerBuilderOption : public grpc::ServerBuilderOption {
   MockSocketMutator* mock_socket_mutator_;
 };
 
-class ServerBuilderWithSocketMutatorTest : public ::testing::Test {
- protected:
-  static void SetUpTestCase() { grpc_init(); }
-
-  static void TearDownTestCase() { grpc_shutdown(); }
-};
-
-TEST_F(ServerBuilderWithSocketMutatorTest, CreateServerWithSocketMutator) {
+TEST(ServerBuilderWithSocketMutatorTest, CreateServerWithSocketMutator) {
   auto address = "localhost:" + std::to_string(grpc_pick_unused_port_or_die());
   auto mock_socket_mutator = new MockSocketMutator();
   std::unique_ptr<grpc::ServerBuilderOption> mock_socket_mutator_builder_option(
@@ -116,6 +109,8 @@ TEST_F(ServerBuilderWithSocketMutatorTest, CreateServerWithSocketMutator) {
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
+  grpc_init();
   int ret = RUN_ALL_TESTS();
+  grpc_shutdown();
   return ret;
 }

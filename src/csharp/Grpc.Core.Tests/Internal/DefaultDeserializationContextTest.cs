@@ -17,13 +17,17 @@
 #endregion
 
 using System;
-using System.Buffers;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using Grpc.Core;
 using Grpc.Core.Internal;
 using Grpc.Core.Utils;
 using NUnit.Framework;
+
+using System.Runtime.InteropServices;
+
+#if GRPC_CSHARP_SUPPORT_SYSTEM_MEMORY
+using System.Buffers;
+#endif
 
 namespace Grpc.Core.Internal.Tests
 {
@@ -43,6 +47,7 @@ namespace Grpc.Core.Internal.Tests
             fakeBufferReaderManager.Dispose();
         }
 
+#if GRPC_CSHARP_SUPPORT_SYSTEM_MEMORY
         [TestCase]
         public void PayloadAsReadOnlySequence_ZeroSegmentPayload()
         {
@@ -113,6 +118,7 @@ namespace Grpc.Core.Internal.Tests
 
             Assert.IsFalse(segmentEnumerator.MoveNext());
         }
+#endif
 
         [TestCase]
         public void NullPayloadNotAllowed()
@@ -190,7 +196,9 @@ namespace Grpc.Core.Internal.Tests
 
             // Getting payload multiple times is illegal
             Assert.Throws(typeof(InvalidOperationException), () => context.PayloadAsNewBuffer());
+#if GRPC_CSHARP_SUPPORT_SYSTEM_MEMORY
             Assert.Throws(typeof(InvalidOperationException), () => context.PayloadAsReadOnlySequence());
+#endif
         }
 
         [TestCase]
@@ -207,7 +215,9 @@ namespace Grpc.Core.Internal.Tests
 
             Assert.AreEqual(0, context.PayloadLength);
             Assert.Throws(typeof(NullReferenceException), () => context.PayloadAsNewBuffer());
+#if GRPC_CSHARP_SUPPORT_SYSTEM_MEMORY
             Assert.Throws(typeof(NullReferenceException), () => context.PayloadAsReadOnlySequence());
+#endif
 
             // Previously reset context can be initialized again
             var origBuffer2 = GetTestBuffer(50);

@@ -17,6 +17,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Grpc.Core.Utils;
 
@@ -31,12 +33,13 @@ namespace Grpc.Core
         static readonly Encoding EncodingUTF8 = System.Text.Encoding.UTF8;
         string name;
         byte[] valueBytes;
-        string lazyValue;
+        Lazy<string> value;
 
         private AuthProperty(string name, byte[] valueBytes)
         {
             this.name = GrpcPreconditions.CheckNotNull(name);
             this.valueBytes = GrpcPreconditions.CheckNotNull(valueBytes);
+            this.value = new Lazy<string>(() => EncodingUTF8.GetString(this.valueBytes));
         }
 
         /// <summary>
@@ -57,7 +60,7 @@ namespace Grpc.Core
         {
             get
             {
-                return lazyValue ?? (lazyValue = EncodingUTF8.GetString(this.valueBytes));
+                return value.Value;
             }
         }
 

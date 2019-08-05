@@ -1,4 +1,4 @@
-#region Copyright notice and license
+﻿#region Copyright notice and license
 
 // Copyright 2015 gRPC authors.
 //
@@ -16,7 +16,10 @@
 
 #endregion
 
-using System.Threading;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Grpc.Core
@@ -47,20 +50,7 @@ namespace Grpc.Core
     /// </para>
     /// </summary>
     /// <typeparam name="T">The message type.</typeparam>
-    public interface IAsyncStreamReader<T>
+    public interface IAsyncStreamReader<T> : IAsyncEnumerator<T>
     {
-        /// <summary>
-        /// Gets the current element in the iteration.
-        /// </summary>
-        T Current { get; }
-
-        /// <summary>
-        /// Advances the reader to the next element in the sequence, returning the result asynchronously.
-        /// </summary>
-        /// <param name="cancellationToken">Cancellation token that can be used to cancel the operation.</param>
-        /// <returns>
-        /// Task containing the result of the operation: true if the reader was successfully advanced
-        /// to the next element; false if the reader has passed the end of the sequence.</returns>
-        Task<bool> MoveNext(CancellationToken cancellationToken);
     }
 }

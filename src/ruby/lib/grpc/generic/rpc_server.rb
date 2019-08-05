@@ -210,7 +210,7 @@ module GRPC
     # A server arguments hash to be passed down to the underlying core server
     #
     # * interceptors:
-    # An array of GRPC::ServerInterceptor objects that will be used for
+    # Am array of GRPC::ServerInterceptor objects that will be used for
     # intercepting server handlers to provide extra functionality.
     # Interceptors are an EXPERIMENTAL API.
     #

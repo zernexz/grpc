@@ -37,7 +37,7 @@ grpc_py_binary(
 grpc_cc_test(
     name = "cancel_ares_query_test",
     srcs = ["cancel_ares_query_test.cc"],
-    external_deps = ["gtest"],
+    external_deps = ["gmock"],
     deps = [
         ":dns_test_util",
         "//:gpr",

@@ -47,6 +47,9 @@ class Channel;
 class Server;
 class ServerBuilder;
 class ServerContext;
+}  // namespace grpc_impl
+namespace grpc {
+
 template <class R>
 class ClientReader;
 template <class W>
@@ -61,8 +64,6 @@ namespace internal {
 template <class W, class R>
 class ServerReaderWriterBody;
 }  // namespace internal
-}  // namespace grpc_impl
-namespace grpc {
 
 class ChannelInterface;
 class ServerInterface;
@@ -254,17 +255,17 @@ class CompletionQueue : private ::grpc::GrpcLibraryCodegen {
   // Friend synchronous wrappers so that they can access Pluck(), which is
   // a semi-private API geared towards the synchronous implementation.
   template <class R>
-  friend class ::grpc_impl::ClientReader;
+  friend class ::grpc::ClientReader;
   template <class W>
-  friend class ::grpc_impl::ClientWriter;
+  friend class ::grpc::ClientWriter;
   template <class W, class R>
-  friend class ::grpc_impl::ClientReaderWriter;
+  friend class ::grpc::ClientReaderWriter;
   template <class R>
-  friend class ::grpc_impl::ServerReader;
+  friend class ::grpc::ServerReader;
   template <class W>
-  friend class ::grpc_impl::ServerWriter;
+  friend class ::grpc::ServerWriter;
   template <class W, class R>
-  friend class ::grpc_impl::internal::ServerReaderWriterBody;
+  friend class ::grpc::internal::ServerReaderWriterBody;
   template <class ServiceType, class RequestType, class ResponseType>
   friend class ::grpc::internal::RpcMethodHandler;
   template <class ServiceType, class RequestType, class ResponseType>

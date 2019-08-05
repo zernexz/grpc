@@ -208,10 +208,7 @@ class AspNetCoreLanguage:
 
     def unimplemented_test_cases(self):
         return _SKIP_COMPRESSION + \
-            ['compute_engine_creds']  + \
-            ['jwt_token_creds'] + \
-            _SKIP_GOOGLE_DEFAULT_CREDS + \
-            _SKIP_COMPUTE_ENGINE_CHANNEL_CREDS
+            _AUTH_TEST_CASES
 
     def unimplemented_test_cases_server(self):
         return _SKIP_COMPRESSION
@@ -824,8 +821,8 @@ def auth_options(language, test_case, google_default_creds_use_key_file,
 
     if test_case in ['jwt_token_creds', 'per_rpc_creds', 'oauth2_auth_token']:
         if language in [
-                'csharp', 'csharpcoreclr', 'aspnetcore', 'node', 'php', 'php7',
-                'python', 'ruby', 'nodepurejs'
+                'csharp', 'csharpcoreclr', 'node', 'php', 'php7', 'python',
+                'ruby', 'nodepurejs'
         ]:
             env['GOOGLE_APPLICATION_CREDENTIALS'] = service_account_key_file
         else:

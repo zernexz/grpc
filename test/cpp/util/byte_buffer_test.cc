@@ -36,12 +36,7 @@ namespace {
 const char* kContent1 = "hello xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 const char* kContent2 = "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy world";
 
-class ByteBufferTest : public ::testing::Test {
- protected:
-  static void SetUpTestCase() { grpc_init(); }
-
-  static void TearDownTestCase() { grpc_shutdown(); }
-};
+class ByteBufferTest : public ::testing::Test {};
 
 TEST_F(ByteBufferTest, CopyCtor) {
   ByteBuffer buffer1;
@@ -126,6 +121,8 @@ TEST_F(ByteBufferTest, SerializationMakesCopy) {
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
+  grpc_init();
   int ret = RUN_ALL_TESTS();
+  grpc_shutdown();
   return ret;
 }

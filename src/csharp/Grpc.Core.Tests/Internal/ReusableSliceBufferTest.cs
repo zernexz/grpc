@@ -17,14 +17,18 @@
 #endregion
 
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Grpc.Core;
 using Grpc.Core.Internal;
 using Grpc.Core.Utils;
 using NUnit.Framework;
+
+using System.Runtime.InteropServices;
+
+#if GRPC_CSHARP_SUPPORT_SYSTEM_MEMORY
+using System.Buffers;
+#endif
 
 namespace Grpc.Core.Internal.Tests
 {
@@ -46,6 +50,7 @@ namespace Grpc.Core.Internal.Tests
             fakeBufferReaderManager.Dispose();
         }
 
+#if GRPC_CSHARP_SUPPORT_SYSTEM_MEMORY
         [TestCase]
         public void NullPayload()
         {
@@ -126,7 +131,13 @@ namespace Grpc.Core.Internal.Tests
             }
             return result;
         }
-
+#else
+        [TestCase]
+        public void OnlySupportedOnNetCore()
+        {
+            // Test case needs to exist to make C# sanity test happy.
+        }
+#endif
         private byte[] GetTestBuffer(int length)
         {
             var testBuffer = new byte[length];
